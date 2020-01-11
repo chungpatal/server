@@ -12,6 +12,19 @@ async function selectPlaceIdxByCategoryIdx(categoryIdx) {
     return result
 }
 
+async function selectGradeDetailByPlaceIdx(placeIdx) {
+    const sql = `
+    SELECT category_idx, grade, detail
+    FROM Checkmate.GRADE
+    WHERE place_idx = (?);
+    `;
+
+    const result = await mysql.query(sql, [placeIdx]);
+
+    return result
+}
+
 module.exports = {
     selectPlaceIdxByCategoryIdx,
+    selectGradeDetailByPlaceIdx,
 };

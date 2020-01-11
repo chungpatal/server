@@ -58,7 +58,7 @@ async function getList(categoryIdx) {
 }
 
 async function getSearch(q) {
-    res = await placeDao.selectPlaceByQuery(q);
+    let res = await placeDao.selectPlaceByQuery(q);
 
     for (let i=0; i<res.length; i++) {
         // 2: 양호, 1: 주의, 0: 경고
@@ -75,7 +75,30 @@ async function getSearch(q) {
     return res;
 }
 
+async function getDetail(placeIdx) {
+    let res = await placeDao.selectPlaceDetailByIdx(placeIdx);
+
+    // 2: 양호, 1: 주의, 0: 경고
+    if (1.6 <= res[0].grade)
+        res[0].grade = 2;
+
+    else if (0.6 <= res[0].grade)
+        res[0].grade = 1;
+
+    else
+        res[0].grade = 0;
+
+    // add grade
+    let grade = await gradeDao.selectGradeDetailByPlaceIdx(placeIdx);
+
+    res[0].detail_info = grade;
+
+
+    return res[0];
+}
+
 module.exports = {
     getList,
     getSearch,
+    getDetail,
 };

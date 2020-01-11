@@ -9,7 +9,7 @@ async function selectAllPlace() {
 
     const result = await mysql.query(sql, []);
 
-    return result
+    return result;
 }
 
 async function selectPlaceByIdx(placeIdx) {
@@ -21,7 +21,7 @@ async function selectPlaceByIdx(placeIdx) {
 
     const result = await mysql.query(sql, [placeIdx]);
 
-    return result
+    return result;
 }
 
 async function selectPlaceByQuery(q) {
@@ -38,11 +38,24 @@ async function selectPlaceByQuery(q) {
 
     const result = await mysql.query(sql, []);
 
-    return result
+    return result;
+}
+
+async function selectPlaceDetailByIdx(placeIdx) {
+    const sql = `
+    SELECT idx AS place_idx, name, address,(grade_sum / grade_cnt) AS grade, legal_name, num, use_idx, pk
+    FROM Checkmate.PLACE
+    WHERE idx = (?)
+    `;
+
+    const result = await mysql.query(sql, [placeIdx]);
+
+    return result;
 }
 
 module.exports = {
     selectAllPlace,
     selectPlaceByIdx,
     selectPlaceByQuery,
+    selectPlaceDetailByIdx,
 };
