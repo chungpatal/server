@@ -53,9 +53,50 @@ async function selectPlaceDetailByIdx(placeIdx) {
     return result;
 }
 
+
+async function insertPlaceTransaction(body) {
+    const { name, address, legal_name, num, pk, use_idx } = body;
+    const { detail_info } = body;
+
+    const grade_cnt = detail_info.length;
+    let grade_sum = 0;
+
+    for (let i=0; i<detail_info.length; i++) {
+        grade_sum += detail_info[i].grade;
+    }
+
+    await mysql.transaction(async (conn) => {
+        const placeIdx = await insertPlace(conn, name, legal_name, num, pk, use_idx, address, grade_sum, grade_cnt);
+        await insertGrades(conn, placeIdx, detail_info);
+    });
+}
+
+async function insertPlace(conn, name, legal_name, num, pk, use_idx, address, grade_sum, grade_cnt) {
+    const sql = `
+    INSERT INTO PLACE(name, legal_name, num, pk, use_idx, address, grade_sum, grade_cnt)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const result = await conn.query(sql, [name, legal_name, num, pk, use_idx, address, grade_sum, grade_cnt]);
+
+    return result.insertId;
+}
+
+async function insertGrades(conn, placeIdx, detail_info) {
+    for (let i=0; i<detail_info.length; i++) {
+        const sql = `
+        INSERT INTO GRADE(place_idx, category_idx, grade, detail)
+        VALUES(?, ?, ?, ?)
+        `;
+    
+        await conn.query(sql, [placeIdx, detail_info[i].category_idx, detail_info[i].grade, detail_info[i].detail]);
+    }
+}
+
 module.exports = {
     selectAllPlace,
     selectPlaceByIdx,
     selectPlaceByQuery,
     selectPlaceDetailByIdx,
+    insertPlaceTransaction,
 };

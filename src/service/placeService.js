@@ -97,8 +97,13 @@ async function getDetail(placeIdx) {
     return res[0];
 }
 
+async function postPlace(body) {
+    await placeDao.insertPlaceTransaction(body);
+}
+
 module.exports = {
     getList,
     getSearch,
     getDetail,
+    postPlace,
 };
