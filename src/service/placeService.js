@@ -1,5 +1,7 @@
 const placeDao = require('../dao/placeDao');
 const gradeDao = require('../dao/gradeDao');
+const rp = require('request-promise-native');
+const {key_id, key} = require('../../config/naverMapApi');
 
 async function getList(categoryIdx) {
     let res;
@@ -88,13 +90,35 @@ async function getDetail(placeIdx) {
     else
         res[0].grade = 0;
 
+    // add lat, long
+    const {x, y} = await getCoord(res[0].address);
+
+    res[0].long = x;
+    res[0].lat = y;
+
     // add grade
     let grade = await gradeDao.selectGradeDetailByPlaceIdx(placeIdx);
 
     res[0].detail_info = grade;
 
-
     return res[0];
+}
+
+async function getCoord(addr) {
+    const options = {
+        uri: 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode',
+        headers: {
+            'X-NCP-APIGW-API-KEY-ID': key_id,
+            'X-NCP-APIGW-API-KEY': key
+        },
+        qs: {
+            query: addr
+        }
+    };
+
+    const json = JSON.parse(await rp(options));
+
+    return {x: json.addresses[0].x, y: json.addresses[0].y};
 }
 
 async function postPlace(body) {
