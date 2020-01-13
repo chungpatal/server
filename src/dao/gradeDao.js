@@ -2,7 +2,7 @@ const mysql = require('../library/mysql');
 
 async function selectPlaceIdxByCategoryIdx(categoryIdx) {
     const sql = `
-    SELECT place_idx
+    SELECT place_idx, grade
     FROM Checkmate.GRADE
     WHERE category_idx = (?);
     `;

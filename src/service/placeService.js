@@ -40,10 +40,10 @@ async function getList(categoryIdx) {
         placeIdxs[i].info = place[0].info;
 
         // 2: 양호, 1: 주의, 0: 경고
-        if (1.6 <= place[0].grade)
+        if (1.6 <= placeIdxs[i].grade)
             placeIdxs[i].grade = 2;
 
-        else if (0.6 <= place[0].grade)
+        else if (0.6 <= placeIdxs[i].grade)
             placeIdxs[i].grade = 1;
 
         else
