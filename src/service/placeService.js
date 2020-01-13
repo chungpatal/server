@@ -90,11 +90,13 @@ async function getDetail(placeIdx) {
     else
         res[0].grade = 0;
 
-    // add lat, long
-    const {x, y} = await getCoord(res[0].address);
+    if (res[0].address != null) {
+        // add lat, long
+        const {x, y} = await getCoord(res[0].address);
 
-    res[0].long = x;
-    res[0].lat = y;
+        res[0].long = x;
+        res[0].lat = y;
+    }
 
     // add grade
     let grade = await gradeDao.selectGradeDetailByPlaceIdx(placeIdx);
@@ -117,8 +119,7 @@ async function getCoord(addr) {
     };
 
     const json = JSON.parse(await rp(options));
-
-    return {x: json.addresses[0].x, y: json.addresses[0].y};
+    return {x: parseFloat(json.addresses[0].x), y: parseFloat(json.addresses[0].y)};
 }
 
 async function postPlace(body) {
