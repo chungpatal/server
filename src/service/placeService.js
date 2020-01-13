@@ -126,9 +126,14 @@ async function postPlace(body) {
     await placeDao.insertPlaceTransaction(body);
 }
 
+async function putPlace(body) {
+    await placeDao.updatePlaceTransaction(body);
+}
+
 module.exports = {
     getList,
     getSearch,
     getDetail,
     postPlace,
+    putPlace,
 };
